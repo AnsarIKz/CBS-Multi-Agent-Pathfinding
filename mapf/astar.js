@@ -1,16 +1,11 @@
-import { HeapQueue } from "../lib/heapQueue";
+import { HeapQueue } from "../lib/heapQueue.js";
+import { manhattanHeuristic } from "./heuristics.js";
 /*
 Эвристика Манхэтэнна
 
 Нужна будет что-бы оценить стоимость возможной клетки на которую хочет пойти агент,
 если клетка отдаляет нас от цели по горизонатали, или вертикали, это нежелательная клетка
 */
-function manhattanHeuristic(a, b) {
-  // |x2 - x1| + |y2 - y1|
-  let dx = Math.abs(b[0] - a[0]);
-  let dy = Math.abs(b[1] - a[1]);
-  return dx + dy;
-}
 
 export function aStar(gridMaze, start, goal, constraints) {
   let heuristic = manhattanHeuristic;
@@ -155,5 +150,3 @@ let route1 = aStar(
     [2, [2, 1], 2, "position"],
   ]
 );
-
-console.log(route1);

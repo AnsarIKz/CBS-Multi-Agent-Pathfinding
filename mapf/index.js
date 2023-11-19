@@ -29,8 +29,11 @@ function mapf(agentsData, gridMaze, heuristicString) {
     const start = agentsData[agent][0];
     const end = agentsData[agent][1];
 
-    let route = aStar(grid, start, end, conflicts, heuristicString);
-    route.push(start); // Add start position
+    let route = aStar(grid, start, end, conflicts);
+    if (route == null) {
+      route = [[["No Possibility"], -1]];
+    }
+    route.unshift([start, 0]); // Add start position
     route.reverse(); // Reverse solution
 
     allSolutions[agent] = route;
@@ -97,7 +100,7 @@ function mapf(agentsData, gridMaze, heuristicString) {
         const updatedConflicts2 = [...currentConflicts, conflicts[1]];
 
         const updatedSolutions2 = { ...currentNode.allSolutions };
-        updatedSolutions2[agent2] = compute_updated_solution(
+        updatedSolutions2[agent2] = computeUpdatedSolution(
           agent2,
           agentPositions2,
           updatedConflicts2,
@@ -122,26 +125,30 @@ function mapf(agentsData, gridMaze, heuristicString) {
 // Example usage
 const agentsData = {
   1: [
-    [0, 1],
-    [3, 2],
+    [0, 0],
+    [4, 4],
   ],
   2: [
-    [1, 0],
+    [0, 4],
     [2, 3],
   ],
   3: [
     [0, 2],
-    [1, 2],
+    [4, 2],
   ],
   4: [
-    [1, 1],
-    [0, 2],
+    [0, 3],
+    [4, 3],
+  ],
+  5: [
+    [2, 3],
+    [4, 3],
   ],
 };
 
 const gridMaze = [
   [0, 0, 0, 0, 0],
-  [0, 1, 0, 1, 0],
+  [1, 1, 1, 0, 1],
   [0, 1, 0, 0, 0],
   [0, 0, 0, 1, 0],
   [0, 0, 0, 0, 0],
@@ -150,5 +157,5 @@ const gridMaze = [
 const result = mapf(agentsData, gridMaze);
 
 for (const agent in result) {
-  console.log(agent + ":", result[agent]);
+  console.log("agent " + agent + ":", result[agent].reverse());
 }

@@ -150,8 +150,11 @@ export function computeUpdatedSolution(
   const end = agentPositions[1];
   const agentConflicts = filterConflicts(conflicts, agent);
 
-  const path = aStar(gridMaze, start, end, agentConflicts, heuristicString);
-  path.push(start); // Add start position
+  let path = aStar(gridMaze, start, end, agentConflicts);
+  if (path == null) {
+    path = [[["No Possibility"], -1]];
+  }
+  path.unshift([start, 0]); // Add start position
   path.reverse(); // Reverse solution
 
   return path;
