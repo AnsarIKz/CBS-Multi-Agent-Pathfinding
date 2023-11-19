@@ -147,9 +147,7 @@ const gridMaze = [
   [0, 0, 0, 0, 0],
 ];
 
-const heuristicString = "manhattan"; // Replace with your desired heuristic
-
-const result = mapf(agentsData, gridMaze, heuristicString);
+const result = mapf(agentsData, gridMaze);
 
 for (const agent in result) {
   console.log(agent + ":", result[agent]);
