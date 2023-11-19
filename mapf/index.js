@@ -8,7 +8,7 @@ import {
 } from "./conflictTreeFunctions.js";
 import { ConflictNode } from "./conflictTree.js";
 
-function mapf(agentsData, gridMaze, heuristicString) {
+function mapf(agentsData, gridMaze) {
   const agentsList = Object.keys(agentsData);
   const agentCombinations = [];
 
@@ -26,6 +26,13 @@ function mapf(agentsData, gridMaze, heuristicString) {
   const allSolutions = {};
 
   for (const agent in agentsData) {
+    //
+    //
+    //
+    //
+    //
+    //
+
     const start = agentsData[agent][0];
     const end = agentsData[agent][1];
 
@@ -134,7 +141,7 @@ const agentsData = {
   ],
   3: [
     [0, 2],
-    [4, 2],
+    [0, 0],
   ],
   4: [
     [0, 3],
@@ -148,7 +155,7 @@ const agentsData = {
 
 const gridMaze = [
   [0, 0, 0, 0, 0],
-  [1, 1, 1, 0, 1],
+  [1, 0, 0, 0, 1],
   [0, 1, 0, 0, 0],
   [0, 0, 0, 1, 0],
   [0, 0, 0, 0, 0],
