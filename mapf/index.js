@@ -9,30 +9,25 @@ import {
 import { ConflictNode } from "./conflictTree.js";
 
 function mapf(agentsData, gridMaze) {
+  // Получение всех ключей агентов.. [1-n]
   const agentsList = Object.keys(agentsData);
   const agentCombinations = [];
 
+  // Комбинируем все возможные вариации агентов
   for (let i = 0; i < agentsList.length - 1; i++) {
     for (let j = i + 1; j < agentsList.length; j++) {
       agentCombinations.push([agentsList[i], agentsList[j]]);
     }
   }
 
-  // Initialise MAPF instance
-  const grid = gridMaze.map((row) => [...row]);
+  const grid = gridMaze;
 
   // Compute all paths using low-level A* search
   let conflicts = [];
   const allSolutions = {};
 
   for (const agent in agentsData) {
-    //
-    //
-    //
-    //
-    //
-    //
-
+    // Определяем всех агентов, и узнаём их начальные точки, и точки стремления
     const start = agentsData[agent][0];
     const end = agentsData[agent][1];
 
@@ -92,8 +87,7 @@ function mapf(agentsData, gridMaze) {
           agent1,
           agentPositions1,
           updatedConflicts1,
-          grid,
-          heuristicString
+          grid
         );
 
         currentNode.right = new ConflictNode(
@@ -111,16 +105,17 @@ function mapf(agentsData, gridMaze) {
           agent2,
           agentPositions2,
           updatedConflicts2,
-          grid,
-          heuristicString
+          grid
         );
 
         currentNode.left = new ConflictNode(
           updatedConflicts2,
           updatedSolutions2
         );
-        currentNode.right.computeTotalCost();
+        currentNode.left.computeTotalCost();
 
+        // Break the loop to update conflicts for all agent combinations
+        // Comment out the break statement if you want to consider conflicts for all agent combinations
         break;
       }
     }

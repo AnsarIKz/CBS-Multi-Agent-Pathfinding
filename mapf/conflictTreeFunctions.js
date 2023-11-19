@@ -138,24 +138,37 @@ function filterConflicts(conflicts, agent) {
 }
 
 // Compute solution for an agent given new constraints
+// Compute solution for an agent given new constraints
 export function computeUpdatedSolution(
   agent,
   agentPositions,
   conflicts,
-  gridMaze,
-  heuristicString
+  gridMaze
 ) {
-  // Compute updated path
   const start = agentPositions[0];
   const end = agentPositions[1];
   const agentConflicts = filterConflicts(conflicts, agent);
 
   let path = aStar(gridMaze, start, end, agentConflicts);
+
   if (path == null) {
     path = [[["No Possibility"], -1]];
+  } else {
+    // Check for conflicts and adjust the path
+    for (const conflict of agentConflicts) {
+      const timestamp = conflict[2];
+      const conflictingPosition = conflict[1];
+
+      // Remove conflicting positions and add the adjusted path
+      path = path.filter(
+        ([position, t]) =>
+          t < timestamp ||
+          position.toString() !== conflictingPosition.toString()
+      );
+      path.unshift([start, 0]); // Add start position
+      path.reverse(); // Reverse solution
+    }
   }
-  path.unshift([start, 0]); // Add start position
-  path.reverse(); // Reverse solution
 
   return path;
 }
