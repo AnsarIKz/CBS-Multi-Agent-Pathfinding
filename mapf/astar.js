@@ -103,7 +103,6 @@ export function aStar(gridMaze, start, goal, constraints) {
         if (c[2] === timer) {
           if (c[3] === "position") {
             // Проверка конфликта по позиции
-            console.log(neighbor[0]);
             if (c[1][0] === neighbor[0] && c[1][1] === neighbor[1]) {
               validFlag = false;
             }

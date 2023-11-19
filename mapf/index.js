@@ -1,3 +1,4 @@
+// Импорт необходимых функций и классов
 import { aStar } from "./astar.js";
 import {
   findLeafNodes,
@@ -8,12 +9,13 @@ import {
 } from "./conflictTreeFunctions.js";
 import { ConflictNode } from "./conflictTree.js";
 
+// Функция для решения задачи MAPF (Multi-Agent Pathfinding)
 function mapf(agentsData, gridMaze) {
-  // Получение всех ключей агентов.. [1-n]
+  // Получение всех ключей агентов (номеров агентов)
   const agentsList = Object.keys(agentsData);
   const agentCombinations = [];
 
-  // Комбинируем все возможные вариации агентов
+  // Генерация всех возможных комбинаций агентов
   for (let i = 0; i < agentsList.length - 1; i++) {
     for (let j = i + 1; j < agentsList.length; j++) {
       agentCombinations.push([agentsList[i], agentsList[j]]);
@@ -22,50 +24,53 @@ function mapf(agentsData, gridMaze) {
 
   const grid = gridMaze;
 
-  // Compute all paths using low-level A* search
+  // Вычисление всех путей с использованием низкоуровневого поиска A*
   let conflicts = [];
   const allSolutions = {};
 
+  // Вычисление оптимальных путей для каждого агента
   for (const agent in agentsData) {
-    // Определяем всех агентов, и узнаём их начальные точки, и точки стремления
+    // Определение начальной и конечной точек для каждого агента
     const start = agentsData[agent][0];
     const end = agentsData[agent][1];
 
+    // Вычисление пути с использованием алгоритма A*
     let route = aStar(grid, start, end, conflicts);
     if (route == null) {
-      route = [[["No Possibility"], -1]];
+      route = [[["No Solution"], -1]]; // В случае отсутствия пути
     }
-    route.unshift([start, 0]); // Add start position
-    route.reverse(); // Reverse solution
+    route.unshift([start, 0]); // Добавление начальной позиции
+    route.reverse(); // Обращение порядка для удобства
 
-    allSolutions[agent] = route;
+    allSolutions[agent] = route; // Сохранение найденного пути для текущего агента
   }
 
-  // Create root node
+  // Создание корневого узла конфликтов
   const root_node = new ConflictNode(conflicts, allSolutions);
 
-  // Compute total cost for all agents
+  // Вычисление общей стоимости для всех агентов
   root_node.computeTotalCost();
 
   let goalNode = null;
   let currentNode = root_node;
 
   while (true) {
-    // Perform Validation
+    // Выполнение валидации
     const leafNodes = findLeafNodes(root_node);
 
-    // Search for goal node (no conflict)
+    // Поиск узла-цели (без конфликтов)
     goalNode = ctGoalNode(leafNodes, agentCombinations);
 
     if (goalNode !== null) {
+      // Не выходить из цикла, даже если goalNode найден
       break;
     }
 
-    // Update current node
+    // Обновление текущего узла
     currentNode = getOptimalNode(leafNodes);
 
-    // Find conflicts
-    for (const combination of agentCombinations) {
+    // Поиск конфликтов
+    for (let combination of agentCombinations) {
       const agent1 = combination[0];
       const agent2 = combination[1];
 
@@ -74,7 +79,7 @@ function mapf(agentsData, gridMaze) {
 
       conflicts = computeConflicts(agent1, agent2, path1, path2);
 
-      // Resolve conflict for one agent combination
+      // Решение конфликта для одной комбинации агентов
       if (conflicts.length !== 0) {
         const currentConflicts = currentNode.conflicts;
 
@@ -114,17 +119,15 @@ function mapf(agentsData, gridMaze) {
         );
         currentNode.left.computeTotalCost();
 
-        // Break the loop to update conflicts for all agent combinations
-        // Comment out the break statement if you want to consider conflicts for all agent combinations
-        break;
+        // Не прерываем цикл для обновления конфликтов для всех комбинаций агентов
       }
     }
   }
 
-  return goalNode.allSolutions;
+  return goalNode.allSolutions; // Возвращаем оптимальные пути для агентов
 }
 
-// Example usage
+// Пример использования
 const agentsData = {
   1: [
     [0, 0],
@@ -135,13 +138,10 @@ const agentsData = {
     [2, 3],
   ],
   3: [
-    [0, 2],
+    [0, 3],
     [0, 0],
   ],
-  4: [
-    [0, 3],
-    [4, 3],
-  ],
+
   5: [
     [2, 3],
     [4, 3],
