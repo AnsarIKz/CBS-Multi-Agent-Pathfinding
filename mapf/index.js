@@ -8,9 +8,34 @@ import {
   computeUpdatedSolution,
 } from "./conflictTreeFunctions.js";
 import { ConflictNode } from "./conflictTree.js";
+import { manhattanHeuristic, portalHeuristic } from "./heuristics.js";
+
+function findPortals(matrix) {
+  const coordinates = [];
+
+  for (let i = 0; i < matrix.length; i++) {
+    for (let j = 0; j < matrix[i].length; j++) {
+      if (matrix[i][j] === 2) {
+        coordinates.push([j, i]);
+      }
+    }
+  }
+
+  return coordinates;
+}
+
+function mergePath(p1, p2) {
+  if (!(p1?.length && p2?.length)) {
+    return null;
+  }
+  console.log(p1, p2);
+  p2.forEach((element, i, arr) => (arr[i][1] += p1[p1.length - 1][1]));
+  return [...p1, ...p2];
+}
 
 function mapf(agentsData, gridMaze, heuristicString) {
   const agentsList = Object.keys(agentsData);
+  const portalList = findPortals(gridMaze);
   const agentCombinations = [];
 
   for (let i = 0; i < agentsList.length - 1; i++) {
@@ -24,10 +49,21 @@ function mapf(agentsData, gridMaze, heuristicString) {
   const allSolutions = {};
 
   for (const agent in agentsData) {
+    let route;
     const start = agentsData[agent][0];
     const end = agentsData[agent][1];
 
-    let route = aStar(grid, start, end, conflicts, heuristicString);
+    // let [resPortalHeuristic, portal] = portalHeuristic(start, end, portalList);
+    // let resManhattanHeuristic = manhattanHeuristic(start, end);
+
+    // if (resPortalHeuristic < resManhattanHeuristic) {
+    //   let res1 = aStar(grid, start, portal[0], conflicts);
+    //   let res2 = aStar(grid, portal[1], end, conflicts);
+    //   route = mergePath(res1, res2);
+    // } else {
+    //   route = aStar(grid, start, end, conflicts);
+    // }
+    route = aStar(grid, start, end, conflicts);
     if (route == null) {
       route = [[start, -1]];
     }
@@ -112,7 +148,9 @@ const generateRandomCoordinate = () => Math.floor(Math.random() * 40);
 const generateRandomScenario = (numAgents) => {
   const agentsData = {};
   const gridMaze = Array.from({ length: 40 }, () =>
-    Array.from({ length: 40 }, () => (Math.random() > 0.8 ? 1 : 0))
+    Array.from({ length: 40 }, () =>
+      Math.random() > 0.8 ? (Math.random() > 0.2 ? 1 : 2) : 0
+    )
   );
 
   const jsonData = JSON.stringify(gridMaze);
@@ -143,7 +181,7 @@ const generateRandomScenario = (numAgents) => {
   return { agentsData, gridMaze };
 };
 
-let { agentsData, gridMaze } = generateRandomScenario(10);
+let { agentsData, gridMaze } = generateRandomScenario(20);
 const result = mapf(agentsData, gridMaze, "manhattan");
 
 let resJson = {};

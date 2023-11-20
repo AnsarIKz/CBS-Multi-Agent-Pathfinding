@@ -159,7 +159,7 @@ export function aStar(gridMaze, start, goal, constraints) {
         !gScore.has(neighbor.toString()) ||
         neighborGScore < gScore.get(neighbor.toString())
       ) {
-        console.log("5");
+        console.log(currentTimestamp + 1, " TIME");
         cameFrom[[neighbor, currentTimestamp + 1]] = [
           currentPosition,
           currentTimestamp,
