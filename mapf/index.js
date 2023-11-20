@@ -126,12 +126,12 @@ function mapf(agentsData, gridMaze) {
 }
 
 // Пример использования
-const generateRandomCoordinate = () => Math.floor(Math.random() * 10);
+const generateRandomCoordinate = () => Math.floor(Math.random() * 70);
 
 const generateRandomScenario = (numAgents) => {
   const agentsData = {};
-  const gridMaze = Array.from({ length: 10 }, () =>
-    Array.from({ length: 10 }, () =>
+  const gridMaze = Array.from({ length: 70 }, () =>
+    Array.from({ length: 70 }, () =>
       Math.random() > 0.8 ? (Math.random() > 0.2 ? 1 : 2) : 0
     )
   );
@@ -164,7 +164,7 @@ const generateRandomScenario = (numAgents) => {
   return { agentsData, gridMaze };
 };
 
-let { agentsData, gridMaze } = generateRandomScenario(5);
+let { agentsData, gridMaze } = generateRandomScenario(20);
 const result = mapf(agentsData, gridMaze, "manhattan");
 
 let resJson = {};
