@@ -29,21 +29,19 @@ export function computeConflicts(agent1, agent2, path1, path2) {
     }
   }
 
-  for (let timestamp = 0; timestamp < minLength - 1; timestamp++) {
+  for (let timestamp = 0; timestamp < minLength - 2; timestamp++) {
     const agent1Position1 = getCoordsAtTimestamp(path1, timestamp);
     const agent1Position2 = getCoordsAtTimestamp(path1, timestamp + 1);
 
     const agent2Position1 = getCoordsAtTimestamp(path2, timestamp);
     const agent2Position2 = getCoordsAtTimestamp(path2, timestamp + 1);
+    console.log(path1, path2, timestamp);
 
     if (
-      agent1Position1 &&
-      agent1Position2 &&
-      agent2Position1 &&
-      agent2Position2 &&
       agent1Position1.toString() === agent2Position2.toString() &&
       agent1Position2.toString() === agent2Position1.toString()
     ) {
+      console.log("EEEEEEEEEEEEEEEEEEEEEEEEEEDGEE");
       conflicts.push([
         agent1,
         [agent1Position1, agent1Position2],
