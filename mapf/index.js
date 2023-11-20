@@ -1,4 +1,5 @@
 // Импорт необходимых функций и классов
+import fs from "fs";
 import { aStar } from "./astar.js";
 import {
   findLeafNodes,
@@ -128,36 +129,76 @@ function mapf(agentsData, gridMaze) {
 }
 
 // Пример использования
-const agentsData = {
-  1: [
-    [0, 0],
-    [4, 4],
-  ],
-  2: [
-    [0, 4],
-    [2, 3],
-  ],
-  3: [
-    [0, 3],
-    [0, 0],
-  ],
+const generateRandomCoordinate = () => Math.floor(Math.random() * 30 - 1);
 
-  5: [
-    [2, 3],
-    [4, 3],
-  ],
+const generateRandomScenario = (numAgents) => {
+  const agentsData = {};
+  const gridMaze = Array.from({ length: 30 }, () =>
+    Array.from({ length: 30 }, () => (Math.random() > 0.8 ? 1 : 0))
+  );
+
+  const jsonData = JSON.stringify(gridMaze);
+  fs.writeFileSync("buildedGrid.json", jsonData);
+
+  for (let agentId = 1; agentId <= numAgents; agentId++) {
+    const startX = generateRandomCoordinate();
+    const startY = generateRandomCoordinate();
+    let endX, endY;
+
+    do {
+      endX = generateRandomCoordinate();
+      endY = generateRandomCoordinate();
+    } while (
+      endX < 0 ||
+      endX >= gridMaze.length ||
+      endY < 0 ||
+      endY >= gridMaze[0].length ||
+      gridMaze[endX][endY] === 1
+    );
+
+    agentsData[agentId] = [
+      [startX, startY],
+      [endX, endY],
+    ];
+  }
+
+  return { agentsData, gridMaze };
 };
 
-const gridMaze = [
-  [0, 0, 0, 0, 0],
-  [1, 0, 0, 0, 1],
-  [0, 1, 0, 0, 0],
-  [0, 0, 0, 1, 0],
-  [0, 0, 0, 0, 0],
-];
+let { agentsData, gridMaze } = generateRandomScenario(20);
+// const agentsData = {
+//   1: [
+//     [0, 0],
+//     [4, 4],
+//   ],
+//   2: [
+//     [0, 4],
+//     [2, 3],
+//   ],
+//   3: [
+//     [0, 3],
+//     [0, 0],
+//   ],
+
+//   5: [
+//     [2, 3],
+//     [4, 3],
+//   ],
+// };
+
+// const gridMaze = [
+//   [0, 0, 0, 0, 0],
+//   [1, 0, 0, 0, 1],
+//   [0, 1, 0, 0, 0],
+//   [0, 0, 0, 1, 0],
+//   [0, 0, 0, 0, 0],
+// ];
 
 const result = mapf(agentsData, gridMaze);
 
+let resJson = {};
 for (const agent in result) {
+  resJson[`agent${agent}`] = result[agent].reverse();
   console.log("agent " + agent + ":", result[agent].reverse());
 }
+fs.writeFileSync("agentResults.json", JSON.stringify(resJson));

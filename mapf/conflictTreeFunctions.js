@@ -1,4 +1,3 @@
-// Импорт необходимых функций
 import { aStar } from "./astar.js";
 
 function getCoordsAtTimestamp(mask, timestamp) {
@@ -10,17 +9,19 @@ function getCoordsAtTimestamp(mask, timestamp) {
   return null; // Значения координат не найдены для указанного timestamp
 }
 
-// Функция для вычисления конфликтов между двумя агентами
 export function computeConflicts(agent1, agent2, path1, path2) {
   const conflicts = [];
   const minLength = Math.min(path1.length, path2.length) - 1;
-  // Проверка конфликтов на каждом временном шаге
+
   for (let timestamp = 0; timestamp < minLength; timestamp++) {
     let position1 = getCoordsAtTimestamp(path1, timestamp);
     let position2 = getCoordsAtTimestamp(path2, timestamp);
-    // Конфликт обнаружен
 
-    if (position1.toString() == position2.toString()) {
+    if (
+      position1 &&
+      position2 &&
+      position1.toString() === position2.toString()
+    ) {
       conflicts.push([agent1, position1, timestamp, "position"]);
       conflicts.push([agent2, position1, timestamp, "position"]);
 
@@ -28,16 +29,18 @@ export function computeConflicts(agent1, agent2, path1, path2) {
     }
   }
 
-  // Вычисление конфликтов на ребре (a-b-c-d, g-e-d-c-x: конфликт на c-d/d-c)
   for (let timestamp = 0; timestamp < minLength - 1; timestamp++) {
-    const agent1Position1 = getCoordsAtTimestamp(path1, timestamp); // c
-    const agent1Position2 = getCoordsAtTimestamp(path1, timestamp + 1); // d
+    const agent1Position1 = getCoordsAtTimestamp(path1, timestamp);
+    const agent1Position2 = getCoordsAtTimestamp(path1, timestamp + 1);
 
-    const agent2Position1 = getCoordsAtTimestamp(path2, timestamp); // d
-    const agent2Position2 = getCoordsAtTimestamp(path2, timestamp + 1); // c
+    const agent2Position1 = getCoordsAtTimestamp(path2, timestamp);
+    const agent2Position2 = getCoordsAtTimestamp(path2, timestamp + 1);
 
-    // Обнаружен конфликт на ребре
     if (
+      agent1Position1 &&
+      agent1Position2 &&
+      agent2Position1 &&
+      agent2Position2 &&
       agent1Position1.toString() === agent2Position2.toString() &&
       agent1Position2.toString() === agent2Position1.toString()
     ) {
@@ -53,14 +56,14 @@ export function computeConflicts(agent1, agent2, path1, path2) {
         timestamp + 1,
         "edge",
       ]);
+
       return conflicts;
     }
   }
 
-  return conflicts; // = []
+  return conflicts;
 }
 
-// Функция для поиска всех листовых узлов в дереве конфликтов
 export function findLeafNodes(rootNode) {
   const leafNodes = [];
 
@@ -83,12 +86,11 @@ export function findLeafNodes(rootNode) {
   return leafNodes;
 }
 
-// Выполнение валидации CT: поиск узла-цели без конфликтов
 export function ctGoalNode(leafNodes, agentCombinations) {
   const goalNodes = [];
 
   for (const node of leafNodes) {
-    let conflictsFlag = false; // Сбрасываем флаг для каждого узла
+    let conflictsFlag = false;
 
     for (const combination of agentCombinations) {
       const agent1 = combination[0];
@@ -100,7 +102,7 @@ export function ctGoalNode(leafNodes, agentCombinations) {
 
       if (conflicts.length !== 0) {
         conflictsFlag = true;
-        break; // Прерываем цикл, если найден хотя бы один конфликт
+        break;
       }
     }
 
@@ -117,11 +119,9 @@ export function ctGoalNode(leafNodes, agentCombinations) {
   }
 }
 
-// Функция для выбора оптимального листового узла на основе общей стоимости и числа конфликтов
 export function getOptimalNode(leafNodes) {
   leafNodes.sort((a, b) => a.totalCost - b.totalCost);
 
-  // Разрыв связей с CAT (таблицей избежания конфликтов)
   const leastCost = leafNodes[0].totalCost;
   const leafNodesLeastCost = [];
 
@@ -136,13 +136,10 @@ export function getOptimalNode(leafNodes) {
   return leafNodesLeastCost[0];
 }
 
-// Получение конфликтов для данного агента только
 function filterConflicts(conflicts, agent) {
   const agentConflicts = [];
 
-  // Итерация по всем конфликтам
   for (const conflict of conflicts) {
-    // Обновление сетки в случае конфликта для данного агента
     if (conflict[0] === agent) {
       agentConflicts.push(conflict);
     }
@@ -151,7 +148,6 @@ function filterConflicts(conflicts, agent) {
   return agentConflicts;
 }
 
-// Вычисление решения для агента при новых ограничениях
 export function computeUpdatedSolution(
   agent,
   agentPositions,
@@ -165,21 +161,19 @@ export function computeUpdatedSolution(
   let path = aStar(gridMaze, start, end, agentConflicts);
 
   if (path == null) {
-    path = [[["No Solution"], -1]];
+    path = [[start, -1]];
   } else {
-    // Проверка конфликтов и корректировка пути
     for (const conflict of agentConflicts) {
       const timestamp = conflict[2];
       const conflictingPosition = conflict[1];
 
-      // Удаление конфликтующих позиций и добавление скорректированного пути
       path = path.filter(
         ([position, t]) =>
           t < timestamp ||
           position.toString() !== conflictingPosition.toString()
       );
-      path.unshift([start, 0]); // Добавление начальной позиции
-      path.reverse(); // Обращение порядка для удобства
+      path.unshift([start, 0]);
+      path.reverse();
     }
   }
 
