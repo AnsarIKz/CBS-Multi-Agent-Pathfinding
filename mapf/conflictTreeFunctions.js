@@ -3,7 +3,6 @@ import { manhattanHeuristic, portalHeuristic } from "./heuristics.js";
 import { findPortals, mergePath } from "./utils.js";
 
 function getCoordsAtTimestamp(mask, timestamp) {
-  console.log(mask, timestamp);
   for (const [coords, t] of mask) {
     if (t === timestamp) {
       return coords;
@@ -157,7 +156,6 @@ export function computeUpdatedSolution(
   let resManhattanHeuristic = manhattanHeuristic(start, end);
 
   if (resPortalHeuristic < resManhattanHeuristic) {
-    console.log(resPortalHeuristic, resManhattanHeuristic, start);
     let res1 = aStar(gridMaze, start, portal[0], conflicts);
     let res2 = aStar(gridMaze, portal[1], end, conflicts);
 

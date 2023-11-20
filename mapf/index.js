@@ -10,8 +10,8 @@ import {
 import { ConflictNode } from "./conflictTree.js";
 import { manhattanHeuristic, portalHeuristic } from "./heuristics.js";
 import { findPortals, mergePath } from "./utils.js";
-
-function mapf(agentsData, gridMaze) {
+let date = new Date();
+export function mapf(agentsData, gridMaze) {
   const agentsList = Object.keys(agentsData);
 
   const portalList = findPortals(gridMaze);
@@ -36,7 +36,6 @@ function mapf(agentsData, gridMaze) {
     let resManhattanHeuristic = manhattanHeuristic(start, end);
 
     if (resPortalHeuristic < resManhattanHeuristic) {
-      console.log(resPortalHeuristic, resManhattanHeuristic, start);
       let res1 = aStar(grid, start, portal[0], conflicts);
       let res2 = aStar(grid, portal[1], end, conflicts);
 
@@ -126,12 +125,12 @@ function mapf(agentsData, gridMaze) {
 }
 
 // Пример использования
-const generateRandomCoordinate = () => Math.floor(Math.random() * 70);
+const generateRandomCoordinate = () => Math.floor(Math.random() * 200);
 
 const generateRandomScenario = (numAgents) => {
   const agentsData = {};
-  const gridMaze = Array.from({ length: 70 }, () =>
-    Array.from({ length: 70 }, () =>
+  const gridMaze = Array.from({ length: 200 }, () =>
+    Array.from({ length: 200 }, () =>
       Math.random() > 0.8 ? (Math.random() > 0.2 ? 1 : 2) : 0
     )
   );
@@ -164,12 +163,13 @@ const generateRandomScenario = (numAgents) => {
   return { agentsData, gridMaze };
 };
 
-let { agentsData, gridMaze } = generateRandomScenario(20);
-const result = mapf(agentsData, gridMaze, "manhattan");
+// let { agentsData, gridMaze } = generateRandomScenario(50);
+// const result = mapf(agentsData, gridMaze);
 
-let resJson = {};
-for (const agent in result) {
-  resJson[`agent${agent}`] = result[agent].reverse();
-  console.log("agent " + agent + ":", result[agent].reverse());
-}
-fs.writeFileSync("agentResults.json", JSON.stringify(resJson));
+// let resJson = {};
+// for (const agent in result) {
+//   resJson[`agent${agent}`] = result[agent].reverse();
+//   console.log("agent " + agent + ":", result[agent].reverse());
+// }
+// console.log(new Date() - date);
+// fs.writeFileSync("agentResults.json", JSON.stringify(resJson));

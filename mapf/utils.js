@@ -16,7 +16,7 @@ export function mergePath(p1, p2) {
   if (!(p1?.length && p2?.length)) {
     return [];
   }
-  console.log(p1, p2);
+
   p2.forEach((element, i, arr) => (arr[i][1] += p1[p1.length - 1][1]));
   return [...p1, ...p2];
 }
