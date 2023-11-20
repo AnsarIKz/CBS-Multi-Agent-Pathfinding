@@ -71,6 +71,7 @@ export function aStar(gridMaze, start, goal, constraints) {
         const prev = cameFrom[[currentPosition, timestamp]];
         currentPosition = prev[0];
         timestamp = prev[1];
+        // console.log(path);
       }
 
       path.reverse();

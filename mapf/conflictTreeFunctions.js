@@ -1,6 +1,9 @@
 import { aStar } from "./astar.js";
+import { manhattanHeuristic, portalHeuristic } from "./heuristics.js";
+import { findPortals } from "./utils.js";
 
 function getCoordsAtTimestamp(mask, timestamp) {
+  console.log(mask, timestamp);
   for (const [coords, t] of mask) {
     if (t === timestamp) {
       return coords;
@@ -17,7 +20,7 @@ export function computeConflicts(agent1, agent2, path1, path2) {
     let position1 = getCoordsAtTimestamp(path1, timestamp);
     let position2 = getCoordsAtTimestamp(path2, timestamp);
 
-    if (position1?.toString() == position2?.toString()) {
+    if (position1.toString() == position2.toString()) {
       conflicts.push([agent1, position1, timestamp, "position"]);
       conflicts.push([agent2, position1, timestamp, "position"]);
       return conflicts;
@@ -146,10 +149,31 @@ export function computeUpdatedSolution(
   const start = agentPositions[0];
   const end = agentPositions[1];
   const agentConflicts = filterConflicts(conflicts, agent);
+  let path;
 
-  let path = aStar(gridMaze, start, end, agentConflicts);
+  const portalList = findPortals(gridMaze);
 
-  path.push([start, 0]);
+  let [resPortalHeuristic, portal] = portalHeuristic(start, end, portalList);
+  let resManhattanHeuristic = manhattanHeuristic(start, end);
+
+  if (resPortalHeuristic < resManhattanHeuristic) {
+    console.log(resPortalHeuristic, resManhattanHeuristic, start);
+    let res1 = aStar(gridMaze, start, portal[0], conflicts);
+    let res2 = aStar(gridMaze, portal[1], end, conflicts);
+
+    path = mergePath(res1, res2);
+  }
+  if (resPortalHeuristic >= resManhattanHeuristic || route?.length == 0) {
+    path = aStar(gridMaze, start, end, conflicts);
+  }
+
+  path = aStar(gridMaze, start, end, agentConflicts);
+  if (path == null) {
+    path = [start];
+  } else {
+    path.unshift([start, 0]);
+  }
+
   path.reverse();
 
   return path;
