@@ -95,7 +95,6 @@ export function aStar(gridMaze, start, goal, constraints) {
         neighbor[1] >= gridMaze[0].length ||
         gridMaze[neighbor[0]][neighbor[1]] === 1
       ) {
-        console.log("0");
         validFlag = false;
       }
 
@@ -105,7 +104,6 @@ export function aStar(gridMaze, start, goal, constraints) {
           if (c[3] === "position") {
             // Проверка конфликта по позиции
             if (c[1][0] === neighbor[0] && c[1][1] === neighbor[1]) {
-              console.log("1");
               validFlag = false;
             }
           } else if (c[3] === "edge") {
@@ -120,7 +118,6 @@ export function aStar(gridMaze, start, goal, constraints) {
                 c[1][1][0] === currentPosition[0] &&
                 c[1][1][1] === currentPosition[1])
             ) {
-              console.log("2");
               validFlag = false;
             }
           }
@@ -129,7 +126,6 @@ export function aStar(gridMaze, start, goal, constraints) {
 
       // Добавление соседа, если он допустим
       if (validFlag) {
-        console.log(3);
         neighbors.push(neighbor);
       }
     }
@@ -141,7 +137,6 @@ export function aStar(gridMaze, start, goal, constraints) {
         visitedSet.has(neighbor.toString()) &&
         neighbor[0] !== currentPosition[0]
       ) {
-        console.log("4");
         continue;
       }
 
@@ -159,7 +154,6 @@ export function aStar(gridMaze, start, goal, constraints) {
         !gScore.has(neighbor.toString()) ||
         neighborGScore < gScore.get(neighbor.toString())
       ) {
-        console.log(currentTimestamp + 1, " TIME");
         cameFrom[[neighbor, currentTimestamp + 1]] = [
           currentPosition,
           currentTimestamp,

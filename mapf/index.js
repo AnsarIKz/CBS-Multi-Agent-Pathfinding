@@ -53,16 +53,16 @@ function mapf(agentsData, gridMaze, heuristicString) {
     const start = agentsData[agent][0];
     const end = agentsData[agent][1];
 
-    // let [resPortalHeuristic, portal] = portalHeuristic(start, end, portalList);
-    // let resManhattanHeuristic = manhattanHeuristic(start, end);
+    let [resPortalHeuristic, portal] = portalHeuristic(start, end, portalList);
+    let resManhattanHeuristic = manhattanHeuristic(start, end);
 
-    // if (resPortalHeuristic < resManhattanHeuristic) {
-    //   let res1 = aStar(grid, start, portal[0], conflicts);
-    //   let res2 = aStar(grid, portal[1], end, conflicts);
-    //   route = mergePath(res1, res2);
-    // } else {
-    //   route = aStar(grid, start, end, conflicts);
-    // }
+    if (resPortalHeuristic < resManhattanHeuristic) {
+      let res1 = aStar(grid, start, portal[0], conflicts);
+      let res2 = aStar(grid, portal[1], end, conflicts);
+      route = mergePath(res1, res2);
+    } else {
+      route = aStar(grid, start, end, conflicts);
+    }
     route = aStar(grid, start, end, conflicts);
     if (route == null) {
       route = [[start, -1]];
