@@ -1,20 +1,30 @@
+body {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    background-color: rgb(46, 46, 46);
+    justify-content: center;
+    height: 100vh;
+}
+
 #grid-container {
+    
     display: grid;
-    grid-template-columns: repeat(200, 10px);
-    grid-gap: 1px;
+    grid-template-columns: repeat(15, 50px);
+    grid-gap: 5px;
     margin: 5px;
 }
 
 .cell {
-    width: 10px;
-    height: 10px;
-    border: 1px solid #000;
+    width: 50px;
+    height: 50px;
+    background-color: rgb(255, 218, 173);
     box-sizing: border-box;
     position: relative;
 }
 
 .stone {
-    background-color: #999;
+    background-color:  rgb(46, 46, 46);
 }
 
 .agent-path {
@@ -24,5 +34,5 @@
 }
 
 .portal {
-    background-color: red;
+    border:5px solid #860078;
 }

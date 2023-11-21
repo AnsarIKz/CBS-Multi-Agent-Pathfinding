@@ -72,12 +72,23 @@ async function onload() {
 
     return color;
   }
+  let maxStep = Math.max(
+    ...Object.keys(agentPaths).map((item) => agentPaths[item].length)
+  );
 
-  timeSlider.addEventListener("input", function () {
-    const currentTime = parseInt(this.value);
-    clearPaths();
-    updatePaths(currentTime);
-  });
+  let isStepNow = false;
+  async function start() {
+    for (let currentStep = 0; currentStep < maxStep - 1; currentStep++) {
+      if (!isStepNow) {
+        isStepNow = true;
+        setTimeout(() => {
+          clearPaths();
+          updatePaths(currentStep);
+          isStepNow = false;
+        }, 500);
+      }
+    }
+  }
 
   function clearPaths() {
     const agentPathsDivs = document.querySelectorAll(".agent-path");
@@ -86,6 +97,7 @@ async function onload() {
 
   createGrid();
   updatePaths(0);
+  start();
 }
 
 onload();
