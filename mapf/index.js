@@ -10,7 +10,7 @@ import {
 import { ConflictNode } from "./conflictTree.js";
 import { manhattanHeuristic, portalHeuristic } from "./heuristics.js";
 import { findPortals, mergePath } from "./utils.js";
-let date = new Date();
+
 export function mapf(agentsData, gridMaze) {
   const agentsList = Object.keys(agentsData);
 
@@ -125,12 +125,12 @@ export function mapf(agentsData, gridMaze) {
 }
 
 // Пример использования
-const generateRandomCoordinate = () => Math.floor(Math.random() * 200);
+const generateRandomCoordinate = (matrix) => Math.floor(Math.random() * matrix);
 
-const generateRandomScenario = (numAgents) => {
+export const generateRandomScenario = (numAgents, matrix) => {
   const agentsData = {};
-  const gridMaze = Array.from({ length: 200 }, () =>
-    Array.from({ length: 200 }, () =>
+  const gridMaze = Array.from({ length: matrix }, () =>
+    Array.from({ length: matrix }, () =>
       Math.random() > 0.8 ? (Math.random() > 0.2 ? 1 : 2) : 0
     )
   );
@@ -139,13 +139,13 @@ const generateRandomScenario = (numAgents) => {
   fs.writeFileSync("buildedGrid.json", jsonData);
 
   for (let agentId = 1; agentId <= numAgents; agentId++) {
-    const startX = generateRandomCoordinate();
-    const startY = generateRandomCoordinate();
+    const startX = generateRandomCoordinate(matrix);
+    const startY = generateRandomCoordinate(matrix);
     let endX, endY;
 
     do {
-      endX = generateRandomCoordinate();
-      endY = generateRandomCoordinate();
+      endX = generateRandomCoordinate(matrix);
+      endY = generateRandomCoordinate(matrix);
     } while (
       endX < 0 ||
       endX >= gridMaze.length ||
@@ -162,14 +162,3 @@ const generateRandomScenario = (numAgents) => {
 
   return { agentsData, gridMaze };
 };
-
-// let { agentsData, gridMaze } = generateRandomScenario(50);
-// const result = mapf(agentsData, gridMaze);
-
-// let resJson = {};
-// for (const agent in result) {
-//   resJson[`agent${agent}`] = result[agent].reverse();
-//   console.log("agent " + agent + ":", result[agent].reverse());
-// }
-// console.log(new Date() - date);
-// fs.writeFileSync("agentResults.json", JSON.stringify(resJson));
